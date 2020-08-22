@@ -27,11 +27,11 @@ const { WILMA_USER: user,
 
     console.log(chalk.greenBright("Successfully logged in."));
 
+    let {Groups: groups, Exams: exams, Schedule: schedule} = await get("overview");
+
     switch(command) {
 
         case 'homework':
-            let { Groups: groups } = await get("overview");
-
             if(groups.length < 1 ) {
                 console.log(chalk.redBright("You are not in any groups."));
                 return;
@@ -56,6 +56,20 @@ const { WILMA_USER: user,
             break;
 
         case 'courses':
+            if(groups.length < 1 ) {
+                console.log(chalk.redBright("You are not in any groups."));
+                return;
+            }
+
+            const longestCode = groups.map(g=>g.Name).reduce((long, str) => Math.max(long, str.length), 0);
+            const longestName = groups.map(g=>(g.CourseName || g.Name)).reduce((long, str) => Math.max(long, str.length), 0);
+
+            console.log(chalk.magentaBright(`Code ${" ".repeat(longestCode - 4)}| Name ${" ".repeat(longestName - 4)}| Started    | Ends       | Teachers`));
+            
+            groups.forEach(g => {
+                console.log(chalk.magenta(`${g.Name} ${" ".repeat(longestCode - g.Name.length)}| ${(g.CourseName ? g.CourseName : g.Name)} ${" ".repeat(longestName - ( g.CourseName ? g.CourseName.length : g.Name.length))}| ${g.StartDate} | ${g.EndDate} | ${g.Teachers.map(t=>t.TeacherName).join(", ")}`));
+            })
+
 
             break;
 
@@ -72,7 +86,7 @@ const { WILMA_USER: user,
             break;
 
         case 'help':
-            console.log(chalk.yellow("Valid commands are:\n- homework | homework from the last 7 days\n- courses | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams | coming exams"));
+            console.log(chalk.yellow("Valid commands are:\n- homework | homework from the last 7 days\n- courses  | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams    | coming exams"));
             break;
 
         default:
