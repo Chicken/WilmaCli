@@ -1,0 +1,13 @@
+{
+  "name": "wilmacli",
+  "version": "1.0.0",
+  "description": "wilma cli client",
+  "main": "Wilma.js",
+  "dependencies": {
+    "bent": "^7.3.10",
+    "chalk": "^4.1.0",
+    "dotenv": "^8.2.0"
+  },
+  "author": "antti@antti.codes",
+  "license": "ISC"
+}
