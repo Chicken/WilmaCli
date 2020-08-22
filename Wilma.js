@@ -82,6 +82,18 @@ const { WILMA_USER: user,
             break;
 
         case 'exams':
+            if(exams.length<1) {
+                console.log(chalk.blueBright("Yey! You don't have any exams nearby!"));
+                return;
+            }
+            const longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
+            const longestCourse = exams.map(e=>e.Course).reduce((long, str) => Math.max(long, str.length), 0);
+
+            console.log(chalk.magentaBright(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Name`));
+            
+            exams.forEach(e => {
+                console.log(chalk.cyanBright(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Name}`));
+            })
 
             break;
 
