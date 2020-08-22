@@ -71,8 +71,12 @@ const { WILMA_USER: user,
 
             break;
 
+        case 'help':
+            console.log(chalk.yellow("Valid commands are:\n- homework | homework from the last 7 days\n- courses | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams | coming exams"));
+            break;
+
         default:
-            console.log(chalk.redBright("Not a valid command."), chalk.yellow("\nValid commands are:\n- homework | homework from the last 7 days\n- courses | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams | coming exams"));
+            console.log(chalk.redBright("Not a valid command. Do \"node . help\""));
     }
 
 })();
