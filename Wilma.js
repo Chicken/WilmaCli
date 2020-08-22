@@ -17,7 +17,7 @@ const { USER: user,
     try {
         token = await getToken(user, pass, wilma);
     } catch(e) {
-        console.error(chalk.redBright("Failure logging in."));
+        console.error(chalk.redBright("Failed to login."));
         process.exit(1);
     }
 
@@ -25,17 +25,34 @@ const { USER: user,
         "Cookie": `Wilma2SID=${token};`
     });
 
-    console.log(chalk.greenBright("Success logging in."));
+    console.log(chalk.greenBright("Successfully logged in."));
 
     switch(command) {
 
-        case 'test':
-            console.log(await get("overview"));
-            console.log(chalk.greenBright("Succesful."));
-            break;
-
         case 'homework':
+            let { Groups: groups } = await get("overview");
 
+            if(groups.length < 1 ) {
+                console.log("You are not in any groups.");
+                return;
+            }
+
+            let exists = false;
+
+            groups.forEach(g => {
+                if(g.Homework.length<1 || !g.Homework.some(h => new Date() - new Date(h.Date) < 1000 * 60 * 60 * 24 * 7)) return;
+                exists = true;
+                console.log(chalk.blue('----------'));
+                console.log(chalk.magenta(`${g.Name} | ${g.CourseName}`));
+                g.Homework.filter(h => new Date() - new Date(h.Date)  < 1000* 60 * 60 * 24 * 7).forEach(h => {
+                    console.log(chalk.cyanBright(`${h.Date} - ${h.Homework}`));
+                })
+            })
+            if(exists) {
+                console.log(chalk.blue('----------'));
+            } else {
+                console.log(chalk.blueBright("Yey! You haven't gotten any homework in the last 7 days!"));
+            }
             break;
 
         case 'courses':
@@ -55,7 +72,7 @@ const { USER: user,
             break;
 
         default:
-            console.log("Not a valid command.\nValid commands are:\n- homework | homework assigned today\n- courses | your courses\n- schedule | schedule for this week\n- messages | messages for today\n- exams | coming exams");
+            console.log(chalk.redBright("Not a valid command."), chalk.yellow("\nValid commands are:\n- homework | homework from the last 7 days\n- courses | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams | coming exams"));
     }
 
 })();
