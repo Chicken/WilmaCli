@@ -74,11 +74,15 @@ const { WILMA_USER: user,
             break;
 
         case 'schedule':
-            
+            // this week schedule
+            // cool ascii table
             break;
 
         case 'messages':
-
+            // pagination
+            // 10 per page
+            // id | sender | subject
+            // subcommand to read from id
             break;
 
         case 'exams':
