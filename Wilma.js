@@ -33,7 +33,7 @@ const { USER: user,
             let { Groups: groups } = await get("overview");
 
             if(groups.length < 1 ) {
-                console.log("You are not in any groups.");
+                console.log(chalk.redBright("You are not in any groups."));
                 return;
             }
 
