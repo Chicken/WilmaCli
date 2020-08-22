@@ -3,10 +3,10 @@ const bent = require("bent");
 const chalk = require("chalk");
 const command = process.argv[2];
 require("dotenv").config();
-const { USER: user,
-        PASS: pass,
-        WILMA: wilma,
-        SLUG: slug
+const { WILMA_USER: user,
+        WILMA_PASS: pass,
+        WILMA_URL: wilma,
+        WILMA_SLUG: slug
     } = process.env;
 
 
