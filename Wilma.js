@@ -1,4 +1,5 @@
 const getToken = require("./lib/token");
+const getSchedule = require("./lib/schedule");
 const bent = require("bent");
 const chalk = require("chalk");
 const command = process.argv[2];
@@ -74,8 +75,25 @@ const { WILMA_USER: user,
             break;
 
         case 'schedule':
-            // this week schedule
-            // cool ascii table
+            let schedule = await getSchedule(wilma, token, slug);
+            console.log(schedule);
+
+            // I gave up on now, formatting an ascii table with
+            // the data I have is hard, feel free to make a pull
+            // request that makes this work. I made getting 
+            // the schedule json ready and made some code below.
+
+            //const longestLine = schedule.map(e => e.map(e2=>` ${e2.name} ${e2.teacher} ${e2.room} `).reduce((long, str) => Math.max(long, str.length), 0)).reduce((long, len) => Math.max(long, len), 0);
+            //const mostLessonsInDay = schedule.map(e => e.length).reduce((long, len) => Math.max(long, len), 0);
+            //console.log("-".repeat(longestLine*5))
+            //for(let i = 0; i<5; i++) {
+            //    console.log(schedule.map(e=>e[i]).map(e=>{
+            //        let txt = ` ${e ? e.name : ""} ${e ? e.teacher : ""} ${e ? e.room : ""}`;
+            //        return ` `
+            //    }).join("|"))
+            //    console.log("-".repeat(longestLine*5))
+            //}
+            //console.log(`| ${e[0][0].name} ${e[0][0].teacher} ${e[0][0].room} | ${} ${} ${} | ${} ${} ${} | ${} ${} ${} | ${} ${} ${} |`);
             break;
 
         case 'messages':
