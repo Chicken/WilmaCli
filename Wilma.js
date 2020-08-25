@@ -76,24 +76,56 @@ const { WILMA_USER: user,
 
         case 'schedule':
             let schedule = await getSchedule(wilma, token, slug);
-            console.log(schedule);
 
-            // I gave up on now, formatting an ascii table with
-            // the data I have is hard, feel free to make a pull
-            // request that makes this work. I made getting 
-            // the schedule json ready and made some code below.
+            const longestLineLength = Object.values(schedule).map(v => {
+                return Object.values(v).map(v2 => {
+                    return ` ${v2.name} ${v2.teacher} ${v2.room} `.length;
+                }).reduce((long, len) => Math.max(long, len), 0);
+            }).reduce((long, len) => Math.max(long, len), 0);
 
-            //const longestLine = schedule.map(e => e.map(e2=>` ${e2.name} ${e2.teacher} ${e2.room} `).reduce((long, str) => Math.max(long, str.length), 0)).reduce((long, len) => Math.max(long, len), 0);
-            //const mostLessonsInDay = schedule.map(e => e.length).reduce((long, len) => Math.max(long, len), 0);
-            //console.log("-".repeat(longestLine*5))
-            //for(let i = 0; i<5; i++) {
-            //    console.log(schedule.map(e=>e[i]).map(e=>{
-            //        let txt = ` ${e ? e.name : ""} ${e ? e.teacher : ""} ${e ? e.room : ""}`;
-            //        return ` `
-            //    }).join("|"))
-            //    console.log("-".repeat(longestLine*5))
-            //}
-            //console.log(`| ${e[0][0].name} ${e[0][0].teacher} ${e[0][0].room} | ${} ${} ${} | ${} ${} ${} | ${} ${} ${} | ${} ${} ${} |`);
+            let startTimes = [];
+            Object.values(schedule).forEach(v=>{
+                Object.values(v).forEach(k=>{
+                    if(!startTimes.includes(k.start)) startTimes.push(k.start);
+                })
+            })
+            startTimes = startTimes.sort((a,b)=>a-b);
+
+            let timeTexts = []
+            startTimes.forEach((v,i)=>{
+                let hours = Math.floor(v/60);
+                let minutes = v - (hours*60);
+                timeTexts[i] = `${hours}:${minutes.toString().padStart(2, "0")}`;
+            })
+
+            const longestTime = Math.max(...timeTexts.map(v=>v.length))
+
+            const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri" ];
+            
+            console.log(chalk.magenta("+") + chalk.magentaBright("-".repeat(longestTime+2)) + chalk.magenta("+") + (chalk.magentaBright("-".repeat(longestLineLength))+chalk.magenta("+")).repeat(5))
+            console.log(`${chalk.magentaBright("|")} ${" ".repeat(longestTime)} ${chalk.magentaBright("|")}${Array.from(Array(5).keys()).map((_,i)=>` ${chalk.cyan(weekdays[i])}${" ".repeat(longestLineLength-weekdays[i].length-1)}`).join(chalk.magentaBright("|"))}${chalk.magentaBright("|")}`)
+            console.log(chalk.magenta("+") + chalk.magentaBright("-".repeat(longestTime+2)) + chalk.magenta("+") + (chalk.magentaBright("-".repeat(longestLineLength))+chalk.magenta("+")).repeat(5))
+
+            for(let i = 0; i < startTimes.length; i++) {
+                console.log(`${chalk.magentaBright("|")} ${chalk.cyan(timeTexts[i])}${" ".repeat(longestTime-timeTexts[i].length)} ${chalk.magentaBright("|")}${(()=>{
+                    let lessons = [];
+                    for(let j = 0; j < 5; j++) {
+                        let lesson = Object.values(schedule[j.toString()]).find(e=> e.start == startTimes[i]);
+                        if(lesson == null) {
+                            lessons[j] = " ".repeat(longestLineLength);
+                        } else {
+                            let tmp = ` ${lesson.name} ${lesson.room} ${lesson.teacher} `;
+                            lessons[j] = `${chalk.blue(tmp)}${" ".repeat(longestLineLength-tmp.length)}`;
+                        }
+                    }
+                    return lessons;
+                })().join(chalk.magentaBright("|"))}${chalk.magentaBright("|")}`);
+
+                console.log(chalk.magenta("+") + chalk.magentaBright("-".repeat(longestTime+2)) + chalk.magenta("+") + (chalk.magentaBright("-".repeat(longestLineLength))+chalk.magenta("+")).repeat(5))
+            }
+            // subcommand to get extra info from a lesson with like 
+            // node . schedule b3
+            // tells more info for tuesdays third lesson
             break;
 
         case 'messages':
