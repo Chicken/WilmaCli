@@ -1,8 +1,0 @@
-{
-    "border": "blue",
-    "title": "cyan",
-    "text": "magentaBright",
-    "warning": "yellow",
-    "error": "redBright",
-    "success": "greenBright"
-}
