@@ -168,7 +168,7 @@ const { WILMA_USER: user,
 
         case 'exams':
             if(exams.length<1) {
-                console.log(chalk.blueBright("Yey! You don't have any exams nearby!"));
+                console.log(colorize("Yey! You don't have any exams nearby!"),"success");
                 return;
             }
             const longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
