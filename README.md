@@ -13,7 +13,7 @@ Special thanks to all the contributors!
 ## Pre-Requisites
 
 This software requires you to have node and npm installed. <br>
-Having a wilma account makes life easier too.
+Having a wilma account makes life easier too. <br>
 
 ## Usage
 
@@ -22,6 +22,15 @@ Having a wilma account makes life easier too.
 3. Run `node . setup`
 4. Fill in your details
 5. `node . help` for list of commands, `node . <command>` to execute a command
+
+## Building
+For building you need pkg. It can be installed with. `npm i -g pkg` <br>
+Or you can try to build with something else. I use pkg and it works. <br>
+Building is as simple as running the `build.sh` file.
+
+After that you receive linux, mac and win binaries in the `build` folder. <br>
+Take out the one you use, rename it to `wilma` and put it in your `PATH`. <br>
+Now you can use WilmaCli from anywhere on your system and using node.
 
 ## Configs
 
