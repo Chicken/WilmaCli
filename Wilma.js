@@ -143,40 +143,38 @@ const command = process.argv[2];
             break;
 
         case 'messages':
-			//test
-			if (!process.argv[3]) {
-				console.log(colorize("Please give a page to display. E.g. messages 1.","warning"));
-				break;
-			}
+            if (!process.argv[3]) {
+                console.log(colorize("Please give a page to display. E.g. messages 1.","warning"));
+                break;
+            }
 
-			let messages = await getMessages("list", wilma, token, slug);
-			parsed = JSON.parse(messages);
-			let senders = []
-			Object.values(parsed.Messages).forEach((v,i)=>{
-				senders[i]=v.Sender;
-			})
-			const longestSender = Math.max(...senders.map(v=>v.length))
-			Object.values(parsed.Messages).forEach((v, i) => {
-				if (process.argv[3]*10>=i && process.argv[3]*10<=i+10) {
-					console.log(colorize(i +': ' + ' '.repeat(3-i.toString().length)  + v.Sender + ' '.repeat(longestSender-v.Sender.length) + v.TimeStamp,"title") +colorize(' | ',"border") + colorize(v.Subject,"text"));
-				}
-			});
+            let messages = await getMessages("list", wilma, token, slug);
+            parsed = JSON.parse(messages);
+            let senders = [];
+            Object.values(parsed.Messages).forEach((v,i) => {
+                senders[i] = v.Sender;
+            })
+            const longestSender = Math.max(...senders.map(v => v.length));
+            Object.values(parsed.Messages).forEach((v, i) => {
+                if (process.argv[3] * 10 >= i && process.argv[3] * 10 <= i + 10) {
+                    console.log(colorize(i + ': ' + ' '.repeat(3-i.toString().length) + v.Sender + ' '.repeat(longestSender-v.Sender.length) + v.TimeStamp,"title") + colorize(' | ',"border") + colorize(v.Subject,"text"));
+                }
+            });
             break;
 
-		case 'message':
-			if (!process.argv[3]) {
-				console.log(colorize("Please give a message number to display. E.g. message 1.","warning"));
-				break;
-			}
-		 	messaged = await getMessages("list", wilma, token, slug);
-			parsed=JSON.parse(messaged);
-			let messageInfo = parsed.Messages[process.argv[3]]
-			let message = await getMessages(messageInfo.Id, wilma, token, slug);
-			//Some shitty thing to get only the message from the dense jungle of HTML tags
-			filtered=message.substring(message.search('<div class="ckeditor hidden">'),message.search('<div class="no-side-padding overflow-scrolling">')).replace(/<[^>]+>/g, '');
-			console.log(colorize('From: '+messageInfo.Sender + '  At: '+messageInfo.TimeStamp + '\n\n',"title"))
-			console.log(colorize('          '+filtered.replace(/&auml;/g,'ä').replace(/&ouml;/g,'ö').replace(/&nbsp;/g,'').replace(/\n/g,'\n          '),"text"));
-			break;
+        case 'message':
+            if (!process.argv[3]) {
+                console.log(colorize("Please give a message number to display. E.g. message 1.","warning"));
+                break;
+            }
+            let messaged = await getMessages("list", wilma, token, slug);
+            parsed = JSON.parse(messaged);
+            let messageInfo = parsed.Messages[process.argv[3]];
+            let message = await getMessages(messageInfo.Id, wilma, token, slug);
+            let filtered = message.substring(message.search('<div class="ckeditor hidden">'), message.search('<div class="no-side-padding overflow-scrolling">')).replace(/<[^>]+>/g, '');
+            console.log(colorize('From: ' + messageInfo.Sender + '  At: ' + messageInfo.TimeStamp + '\n\n',"title"));
+            console.log(colorize('          ' + filtered.replace(/&auml;/g,'ä').replace(/&ouml;/g,'ö').replace(/&nbsp;/g,'').replace(/\n/g,'\n          '),"text"));
+            break;
 
         case 'exams':
             if(exams.length<1) {
@@ -206,7 +204,7 @@ const command = process.argv[2];
             break;
 
         default:
-            console.log(colorize("Not a valid command. Do \"node . help\""));
+            console.log(colorize("Not a valid command. Use the \"help\" command!", "warning"));
     }
 
 })();
