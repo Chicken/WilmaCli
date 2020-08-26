@@ -12,6 +12,8 @@ Based on the wilma api documentation made by the [OpenWilma](https://github.com/
 
 Some code snippets are directly taken from their lib. The snippets are credited in the code.
 
+Special thanks to all the contributors!
+
 ## Pre-Requisites
 
 This software requires you to have node and npm installed.
