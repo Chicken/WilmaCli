@@ -1,8 +1,8 @@
 {
-	"text": "magentaBright",
-	"title": "cyan",
-	"border": "blue",
-	"warning": "yellow",
-	"error": "redBright",
-	"success": "greenBright"
+    "border": "blue",
+    "title": "cyan",
+    "text": "magentaBright",
+    "warning": "yellow",
+    "error": "redBright",
+    "success": "greenBright"
 }
