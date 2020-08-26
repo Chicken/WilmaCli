@@ -1,7 +1,7 @@
 const getToken = require("./lib/token");
 const getSchedule = require("./lib/schedule");
+const colorize = require("./lib/colorize");
 const bent = require("bent");
-const chalk = require("chalk");
 const command = process.argv[2];
 require("dotenv").config();
 const { WILMA_USER: user,
@@ -18,7 +18,7 @@ const { WILMA_USER: user,
     try {
         token = await getToken(user, pass, wilma);
     } catch(e) {
-        console.error(chalk.redBright("Failed to login."));
+        console.error(colorize("Failed to login.","error"));
         process.exit(1);
     }
 
@@ -26,7 +26,7 @@ const { WILMA_USER: user,
         "Cookie": `Wilma2SID=${token};`
     });
 
-    console.log(chalk.greenBright("Successfully logged in."));
+    console.log(colorize("Successfully logged in.","success"));
 
     let {Groups: groups, Exams: exams, Schedule: schedule} = await get("overview");
 
@@ -34,7 +34,7 @@ const { WILMA_USER: user,
 
         case 'homework':
             if(groups.length < 1 ) {
-                console.log(chalk.redBright("You are not in any groups."));
+                console.log(colorize("You are not in any groups.","warning"));
                 return;
             }
 
@@ -43,32 +43,32 @@ const { WILMA_USER: user,
             groups.forEach(g => {
                 if(g.Homework.length<1 || !g.Homework.some(h => new Date() - new Date(h.Date) < 1000 * 60 * 60 * 24 * 7)) return;
                 exists = true;
-                console.log(chalk.blue('----------'));
-                console.log(chalk.magenta(`${g.Name} | ${g.CourseName}`));
+                console.log(colorize('----------',"border"));
+                console.log(colorize(`${g.Name} | ${g.CourseName}`,"title"));
                 g.Homework.filter(h => new Date() - new Date(h.Date)  < 1000* 60 * 60 * 24 * 7).forEach(h => {
-                    console.log(chalk.cyanBright(`${h.Date} - ${h.Homework}`));
+                    console.log(colorize(`${h.Date} - ${h.Homework}`,"text"));
                 })
             })
             if(exists) {
-                console.log(chalk.blue('----------'));
+                console.log(colorize('----------',"border"));
             } else {
-                console.log(chalk.blueBright("Yey! You haven't gotten any homework in the last 7 days!"));
+                console.log(colorize("Yey! You haven't gotten any homework in the last 7 days!","success"));
             }
             break;
 
         case 'courses':
             if(groups.length < 1 ) {
-                console.log(chalk.redBright("You are not in any groups."));
+                console.log(colorize("You are not in any groups.","warning"));
                 return;
             }
 
             const longestCode = groups.map(g=>g.Name).reduce((long, str) => Math.max(long, str.length), 0);
             const longestName = groups.map(g=>(g.CourseName || g.Name)).reduce((long, str) => Math.max(long, str.length), 0);
 
-            console.log(chalk.magentaBright(`Code ${" ".repeat(longestCode - 4)}| Name ${" ".repeat(longestName - 4)}| Started    | Ends       | Teachers`));
-            
+            console.log(colorize(`Code ${" ".repeat(longestCode - 4)}| Name ${" ".repeat(longestName - 4)}| Started    | Ends       | Teachers`,"title"));
+
             groups.forEach(g => {
-                console.log(chalk.magenta(`${g.Name} ${" ".repeat(longestCode - g.Name.length)}| ${(g.CourseName ? g.CourseName : g.Name)} ${" ".repeat(longestName - ( g.CourseName ? g.CourseName.length : g.Name.length))}| ${g.StartDate} | ${g.EndDate} | ${g.Teachers.map(t=>t.TeacherName).join(", ")}`));
+                console.log(colorize(`${g.Name} ${" ".repeat(longestCode - g.Name.length)}| ${(g.CourseName ? g.CourseName : g.Name)} ${" ".repeat(longestName - ( g.CourseName ? g.CourseName.length : g.Name.length))}| ${g.StartDate} | ${g.EndDate} | ${g.Teachers.map(t=>t.TeacherName).join(", ")}`,"text"));
             })
 
 
@@ -101,13 +101,13 @@ const { WILMA_USER: user,
             const longestTime = Math.max(...timeTexts.map(v=>v.length))
 
             const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri" ];
-            
-            console.log(chalk.magenta("+") + chalk.magentaBright("-".repeat(longestTime+2)) + chalk.magenta("+") + (chalk.magentaBright("-".repeat(longestLineLength))+chalk.magenta("+")).repeat(5))
-            console.log(`${chalk.magentaBright("|")} ${" ".repeat(longestTime)} ${chalk.magentaBright("|")}${Array.from(Array(5).keys()).map((_,i)=>` ${chalk.cyan(weekdays[i])}${" ".repeat(longestLineLength-weekdays[i].length-1)}`).join(chalk.magentaBright("|"))}${chalk.magentaBright("|")}`)
-            console.log(chalk.magenta("+") + chalk.magentaBright("-".repeat(longestTime+2)) + chalk.magenta("+") + (chalk.magentaBright("-".repeat(longestLineLength))+chalk.magenta("+")).repeat(5))
+
+            console.log(colorize("+" + "-".repeat(longestTime+2)+ "+" + ("-".repeat(longestLineLength)+"+").repeat(5),"border"))
+            console.log(`${colorize("|","border")} ${" ".repeat(longestTime)} ${colorize("|","border")}${Array.from(Array(5).keys()).map((_,i)=>` ${colorize(weekdays[i],"title")}${" ".repeat(longestLineLength-weekdays[i].length-1)}`).join(colorize("|","border"))}${colorize("|","border")}`)
+            console.log(colorize("+" + "=".repeat(longestTime+2)+ "+" + ("=".repeat(longestLineLength)+"+").repeat(5),"border"))
 
             for(let i = 0; i < startTimes.length; i++) {
-                console.log(`${chalk.magentaBright("|")} ${chalk.cyan(timeTexts[i])}${" ".repeat(longestTime-timeTexts[i].length)} ${chalk.magentaBright("|")}${(()=>{
+                console.log(`${colorize("|","border")} ${colorize(timeTexts[i],"title")}${" ".repeat(longestTime-timeTexts[i].length)} ${colorize("|","border")}${(()=>{
                     let lessons = [];
                     for(let j = 0; j < 5; j++) {
                         let lesson = Object.values(schedule[j.toString()]).find(e=> e.start == startTimes[i]);
@@ -115,15 +115,15 @@ const { WILMA_USER: user,
                             lessons[j] = " ".repeat(longestLineLength);
                         } else {
                             let tmp = ` ${lesson.name} ${lesson.room} ${lesson.teacher} `;
-                            lessons[j] = `${chalk.blue(tmp)}${" ".repeat(longestLineLength-tmp.length)}`;
+                            lessons[j] = `${colorize(tmp,"text")}${" ".repeat(longestLineLength-tmp.length)}`;
                         }
                     }
                     return lessons;
-                })().join(chalk.magentaBright("|"))}${chalk.magentaBright("|")}`);
+                })().join(colorize("|","border"))}${colorize("|","border")}`);
 
-                console.log(chalk.magenta("+") + chalk.magentaBright("-".repeat(longestTime+2)) + chalk.magenta("+") + (chalk.magentaBright("-".repeat(longestLineLength))+chalk.magenta("+")).repeat(5))
+                console.log(colorize("+" + "-".repeat(longestTime+2) + "+" + ("-".repeat(longestLineLength)+"+").repeat(5),"border"))
             }
-            // subcommand to get extra info from a lesson with like 
+            // subcommand to get extra info from a lesson with like
             // node . schedule b3
             // tells more info for tuesdays third lesson
             break;
@@ -143,20 +143,20 @@ const { WILMA_USER: user,
             const longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
             const longestCourse = exams.map(e=>e.Course).reduce((long, str) => Math.max(long, str.length), 0);
 
-            console.log(chalk.magentaBright(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Name`));
-            
+            console.log(colorize(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Name`,"title"));
+
             exams.forEach(e => {
-                console.log(chalk.cyanBright(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Name}`));
+                console.log(colorize(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Name}`,"text"));
             })
 
             break;
 
         case 'help':
-            console.log(chalk.yellow("Valid commands are:\n- homework | homework from the last 7 days\n- courses  | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams    | coming exams"));
+            console.log(colorize("Valid commands are:\n- homework | homework from the last 7 days\n- courses  | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams    | coming exams","text"));
             break;
 
         default:
-            console.log(chalk.redBright("Not a valid command. Do \"node . help\""));
+            console.log(colorize("Not a valid command. Do \"node . help\""));
     }
 
 })();
