@@ -21,8 +21,6 @@ Having a wilma account makes life easier too.
 
 1. Git clone the repository
 2. Do `npm install`
-3. Rename .env.example to .env
+3. Run `node . setup`
 4. Fill in your details
-5. Read the source code. You should always do this when inputting your login details for software like this.
-6. `node . help` for list of commands
-7. `node . <command>` to execute a command
+5. `node . help` for list of commands, `node . <command>` to execute a command

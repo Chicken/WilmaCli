@@ -1,18 +1,30 @@
 const getToken = require("./lib/token");
 const getSchedule = require("./lib/schedule");
+const setup = require("./lib/setup");
+const basedir = require("os").homedir() + "/.wilma/";
+const fs = require("fs");
 const colorize = require("./lib/colorize");
 const bent = require("bent");
 const command = process.argv[2];
-require("dotenv").config();
-const { WILMA_USER: user,
-        WILMA_PASS: pass,
-        WILMA_URL: wilma,
-        WILMA_SLUG: slug
-    } = process.env;
-
-
 
 (async()=>{
+    if(command == "setup") {
+        setup();
+        return;
+    }
+    
+    if((!fs.existsSync(basedir) && !fs.existsSync(basedir + "creds.json"))) {
+        console.log(colorize("You have not ran the setup yet. Execute the setup command.", "error"));
+        return;
+    }
+
+    const {
+        user,
+        pass,
+        wilma,
+        slug
+    } = require(basedir + "creds.json");
+
     let token = null;
 
     try {
@@ -28,7 +40,7 @@ const { WILMA_USER: user,
 
     console.log(colorize("Successfully logged in.","success"));
 
-    let {Groups: groups, Exams: exams, Schedule: schedule} = await get("overview");
+    let {Groups: groups, Exams: exams} = await get("overview");
 
     switch(command) {
 
@@ -152,7 +164,13 @@ const { WILMA_USER: user,
             break;
 
         case 'help':
-            console.log(colorize("Valid commands are:\n- homework | homework from the last 7 days\n- courses  | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams    | coming exams","text"));
+            console.log(colorize("Valid commands are:\n" +
+                                 "- setup    | setup the client\n" +
+                                 "- homework | homework from the last 7 days\n" +
+                                 "- courses  | your courses\n" +
+                                 "- schedule | schedule for this week\n" +
+                                 "- messages | unread messages\n" +
+                                 "- exams    | coming exams","text"));
             break;
 
         default:
