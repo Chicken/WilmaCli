@@ -1,7 +1,9 @@
 const getToken = require("./lib/token");
 const getSchedule = require("./lib/schedule");
-const colorize = require("./lib/colorize");
+const getMessages = require("./lib/message");
 const bent = require("bent");
+const colorize = require("./lib/colorize");
+
 const command = process.argv[2];
 require("dotenv").config();
 const { WILMA_USER: user,
@@ -129,15 +131,44 @@ const { WILMA_USER: user,
             break;
 
         case 'messages':
-            // pagination
-            // 10 per page
-            // id | sender | subject
-            // subcommand to read from id
+			//test
+			if (!process.argv[3]) {
+				console.log(colorize("Please give a page to display. E.g. messages 1.","warning"));
+				break;
+			}
+
+			let messages = await getMessages("list", wilma, token, slug);
+			parsed = JSON.parse(messages);
+			let senders = []
+			Object.values(parsed.Messages).forEach((v,i)=>{
+				senders[i]=v.Sender;
+			})
+			const longestSender = Math.max(...senders.map(v=>v.length))
+			Object.values(parsed.Messages).forEach((v, i) => {
+				if (process.argv[3]*10>=i && process.argv[3]*10<=i+10) {
+					console.log(colorize(i +': ' + ' '.repeat(3-i.toString().length)  + v.Sender + ' '.repeat(longestSender-v.Sender.length) + v.TimeStamp,"title") +colorize(' | ',"border") + colorize(v.Subject,"text"));
+				}
+			});
             break;
+
+		case 'message':
+			if (!process.argv[3]) {
+				console.log(colorize("Please give a message number to display. E.g. message 1.","warning"));
+				break;
+			}
+		 	messaged = await getMessages("list", wilma, token, slug);
+			parsed=JSON.parse(messaged);
+			let messageInfo = parsed.Messages[process.argv[3]]
+			let message = await getMessages(messageInfo.Id, wilma, token, slug);
+			//Some shitty thing to get only the message from the dense jungle of HTML tags
+			filtered=message.substring(message.search('<div class="ckeditor hidden">'),message.search('<div class="no-side-padding overflow-scrolling">')).replace(/<[^>]+>/g, '');
+			console.log(colorize('From: '+messageInfo.Sender + '  At: '+messageInfo.TimeStamp + '\n\n',"title"))
+			console.log(colorize('          '+filtered.replace(/&auml;/g,'ä').replace(/&ouml;/g,'ö').replace(/&nbsp;/g,'').replace(/\n/g,'\n          '),"text"));
+			break;
 
         case 'exams':
             if(exams.length<1) {
-                console.log(chalk.blueBright("Yey! You don't have any exams nearby!"));
+                console.log(colorize("Yey! You don't have any exams nearby!"),"success");
                 return;
             }
             const longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
@@ -152,7 +183,7 @@ const { WILMA_USER: user,
             break;
 
         case 'help':
-            console.log(colorize("Valid commands are:\n- homework | homework from the last 7 days\n- courses  | your courses\n- schedule | schedule for this week\n- messages | unread messages\n- exams    | coming exams","text"));
+            console.log(colorize("Valid commands are:\n- homework        | homework from the last 7 days\n- courses         | your courses\n- schedule        | schedule for this week\n- messages <page> | all messages\n- message <number>|Read message\n- exams           | coming exams","text"));
             break;
 
         default:
