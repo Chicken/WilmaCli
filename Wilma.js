@@ -137,9 +137,6 @@ const command = process.argv[2];
 
                 console.log(colorize("+" + "-".repeat(longestTime+2) + "+" + ("-".repeat(longestLineLength)+"+").repeat(5),"border"))
             }
-            // subcommand to get extra info from a lesson with like
-            // node . schedule b3
-            // tells more info for tuesdays third lesson
             break;
 
         case 'messages':
