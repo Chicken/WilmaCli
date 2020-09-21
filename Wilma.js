@@ -124,7 +124,7 @@ const command = process.argv[2];
                 console.log(`${colorize("|","border")} ${colorize(timeTexts[i],"title")}${" ".repeat(longestTime-timeTexts[i].length)} ${colorize("|","border")}${(()=>{
                     let lessons = [];
                     for(let j = 0; j < 5; j++) {
-                        let lesson = Object.values(schedule[j.toString()]).find(e=> e.start == startTimes[i]);
+                        let lesson = schedule[j.toString()] ? Object.values(schedule[j.toString()]).find(e=> e.start == startTimes[i]) : null;
                         if(lesson == null) {
                             lessons[j] = " ".repeat(longestLineLength);
                         } else {
