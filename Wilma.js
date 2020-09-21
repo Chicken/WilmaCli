@@ -185,30 +185,73 @@ const command = process.argv[2];
             break;
 
         case 'exams':
-            if(exams.length<1) {
-                console.log(colorize("Yey! You don't have any exams nearby!"),"success");
-                return;
+            if (!process.argv[3]) {
+                process.argv[3] = "coming";
             }
-            const longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
-            const longestCourse = exams.map(e=>e.Course).reduce((long, str) => Math.max(long, str.length), 0);
 
-            console.log(colorize(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Name`,"title"));
+            let longestDate, longestCourse;
 
-            exams.forEach(e => {
-                console.log(colorize(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Name}`,"text"));
-            })
-
+            switch(process.argv[3]) {
+                case "coming":
+                    exams = exams.filter(e=> new Date(e.Date.split(".").reverse().join(".")).getTime() >= Date.now())
+                    if(exams.length<1) {
+                        console.log(colorize("Yey! You don't have any exams nearby!"),"success");
+                        return;
+                    }
+                    longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
+                    longestCourse = exams.map(e=>e.Course).reduce((long, str) => Math.max(long, str.length), 0);
+        
+                    console.log(colorize(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Name`,"title"));
+        
+                    exams.forEach(e => {
+                        console.log(colorize(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Name}`,"text"));
+                    })
+                    break;
+                case "past":
+                    exams = exams.filter(e=> new Date(e.Date.split(".").reverse().join(".")).getTime() <= Date.now())
+                    if(exams.length<1) {
+                        console.log(colorize("You haven't had any exams yet."),"warning");
+                        return;
+                    }
+                    longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
+                    longestCourse = exams.map(e=>e.Course).reduce((long, str) => Math.max(long, str.length), 0);
+        
+                    console.log(colorize(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Name`,"title"));
+        
+                    exams.forEach(e => {
+                        console.log(colorize(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Name}`,"text"));
+                    })
+                    break;
+                case "graded":
+                    exams = exams.filter(e=>e.Grade)
+                    if(exams.length<1) {
+                        console.log(colorize("You haven't had any exams yet."),"warning");
+                        return;
+                    }
+                    longestDate = exams.map(e=>e.Date).reduce((long, str) => Math.max(long, str.length), 0);
+                    longestCourse = exams.map(e=>e.Course).reduce((long, str) => Math.max(long, str.length), 0);
+                    let longestGrade = exams.map(e=>e.Grade).reduce((long, str) => Math.max(long, str.length), 0);
+        
+                    console.log(colorize(`Date ${" ".repeat(longestDate - 4)}| Course ${" ".repeat(longestCourse- 6)}| Grade ${" ".repeat(longestGrade - 5)}|Name`,"title"));
+        
+                    exams.forEach(e => {
+                        console.log(colorize(`${e.Date} ${" ".repeat(longestDate - e.Date.length)}| ${e.Course} ${" ".repeat(longestCourse - e.Course.length)}| ${e.Grade} ${" ".repeat(longestGrade - e.Grade.length)}| ${e.Name}`,"text"));
+                    })
+                    break;
+                default:
+                    return console.log(colorize("Invalid subcommand.", "warning"))
+            }
             break;
 
         case 'help':
             console.log(colorize("Valid commands are:\n" +
-                                 "- setup            | setup the client\n" +
-                                 "- homework         | homework from the last 7 days\n" +
-                                 "- courses          | your courses\n" +
-                                 "- schedule         | schedule for this week\n" +
-                                 "- messages <page>  | all messages\n" +
-                                 "- message <number> | Read message\n" +
-                                 "- exams            | coming exams", "text"));
+                                 "- setup               | setup the client\n" +
+                                 "- homework            | homework from the last 7 days\n" +
+                                 "- courses             | your courses\n" +
+                                 "- schedule            | schedule for this week\n" +
+                                 "- messages [page]     | all messages\n" +
+                                 "- message [number]    | Read message\n" +
+                                 "- exams [past/graded] | coming exams", "text"));
             break;
 
         default:
