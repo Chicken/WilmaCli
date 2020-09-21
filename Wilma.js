@@ -141,8 +141,7 @@ const command = process.argv[2];
 
         case 'messages':
             if (!process.argv[3]) {
-                console.log(colorize("Please give a page to display. E.g. messages 1.","warning"));
-                break;
+                process.argv[3] = 1;
             }
 
             let messages = await getMessages("list", wilma, token, slug);
@@ -159,27 +158,26 @@ const command = process.argv[2];
             })
             const longestSender = Math.max(...senders.map(v => v.length));
             Object.values(parsed.Messages).forEach((v, i) => {
-                if (process.argv[3] * 10 >= i && process.argv[3] * 10 <= i + 10) {
-                    console.log(colorize(i + ': ' + ' '.repeat(3-i.toString().length) + v.Sender + ' '.repeat(longestSender-v.Sender.length) + v.TimeStamp,"title") + colorize(' | ',"border") + colorize(v.Subject,"text"));
+                if (process.argv[3] * 10 - 1 >= i && process.argv[3] * 10 <= i + 10) {
+                    console.log(colorize(i+1 + ': ' + ' '.repeat(3-i.toString().length) + v.Sender + ' '.repeat(longestSender-v.Sender.length) + v.TimeStamp,"title") + colorize(' | ',"border") + colorize(v.Subject,"text"));
                 }
             });
             break;
 
         case 'message':
             if (!process.argv[3]) {
-                console.log(colorize("Please give a message number to display. E.g. message 1.","warning"));
-                break;
+                process.argv[3] = 1;
             }
 
             let messaged = await getMessages("list", wilma, token, slug);
             parsed = JSON.parse(messaged);
 
-            if(parseInt(process.argv[3]) < 0 || process.argv[3] > parsed.Messages.length - 1) {
+            if(parseInt(process.argv[3]) < 1 || process.argv[3] > parsed.Messages.length - 1) {
                 console.log(colorize("There's no messages with that number.", "warning"))
                 break;
             }
 
-            let messageInfo = parsed.Messages[process.argv[3]];
+            let messageInfo = parsed.Messages[process.argv[3]-1];
             let message = await getMessages(messageInfo.Id, wilma, token, slug);
             let filtered = message.substring(message.search('<div class="ckeditor hidden">'), message.search('<div class="no-side-padding overflow-scrolling">')).replace(/<[^>]+>/g, '');
             console.log(colorize('From: ' + messageInfo.Sender + '  At: ' + messageInfo.TimeStamp + '\n\n',"title"));
