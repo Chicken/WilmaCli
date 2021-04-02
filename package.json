@@ -4,6 +4,9 @@
   "description": "wilma cli client",
   "main": "Wilma.js",
   "bin": "Wilma.js",
+  "scripts": {
+    "build": "pkg . --out-path ./build/ -t node14"
+  },
   "dependencies": {
     "bent": "^7.3.12",
     "chalk": "^4.1.0",

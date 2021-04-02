@@ -1,1 +1,0 @@
-pkg . --out-path ./build/
