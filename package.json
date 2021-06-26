@@ -1,18 +1,36 @@
 {
   "name": "wilmacli",
   "version": "2.0.0",
-  "description": "wilma cli client",
+  "description": "Cli client for wilma",
+  "author": "Antti <antti@antti.codes>",
+  "license": "MIT",
+  "keyword": [
+    "wilma",
+    "cli",
+    "client",
+    "studying",
+    "student"
+  ],
+  "homepage": "https://github.com/Chicken/WilmaCli#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Chicken/WilmaCli.git"
+  },
+  "bugs": {
+      "url": "https://github.com/Chicken/WilmaCli/issues"
+  },
   "main": "Wilma.js",
-  "bin": "Wilma.js",
+  "bin": {
+    "wilma": "Wilma.js"
+  },
   "scripts": {
-    "build": "pkg . --out-path ./build/ -t node14"
+    "start": "node .",
+    "update": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
     "bent": "^7.3.12",
     "chalk": "^4.1.1",
     "inquirer": "^8.1.1",
     "readline": "^1.3.0"
-  },
-  "author": "antti@antti.codes",
-  "license": "MIT"
+  }
 }

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const getToken = require("./lib/token");
 const setup = require("./lib/setup");
 const commands = require("./lib/commands");
