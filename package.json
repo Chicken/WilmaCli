@@ -4,7 +4,7 @@
   "description": "Cli client for wilma",
   "author": "Antti <antti@antti.codes>",
   "license": "MIT",
-  "keyword": [
+  "keywords": [
     "wilma",
     "cli",
     "client",
@@ -17,14 +17,13 @@
     "url": "https://github.com/Chicken/WilmaCli.git"
   },
   "bugs": {
-      "url": "https://github.com/Chicken/WilmaCli/issues"
+    "url": "https://github.com/Chicken/WilmaCli/issues"
   },
   "main": "Wilma.js",
   "bin": {
     "wilma": "Wilma.js"
   },
   "scripts": {
-    "start": "node .",
     "update": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
